@@ -20,7 +20,7 @@ export default function Home() {
           href="/admin"
           className="px-8 py-4 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition"
         >
-          Admin Panel
+          Buy INRT Tokens
         </Link>
       </div>
     </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import { useConnect, useAccount, useDisconnect } from 'wagmi';
 
 export default function WalletButton() {
@@ -7,20 +8,25 @@ export default function WalletButton() {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
 
-  const isPending = status === 'pending';
+  // Hydration guard
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) {
+    return (
+      <button disabled className="px-6 py-3 border rounded opacity-50">
+        Connect Wallet
+      </button>
+    );
+  }
 
   if (isConnected && address) {
     return (
       <div className="flex items-center gap-3">
-        <div className="px-4 py-2 bg-blue-600/20 rounded-lg border border-blue-500/30 hidden sm:block">
-          <p className="text-sm text-blue-300">
-            {address.slice(0, 6)}...{address.slice(-4)}
-          </p>
+        <div className="px-3 py-2 rounded bg-blue-600/20 border border-blue-500/30">
+          {address.slice(0, 6)}...{address.slice(-4)}
         </div>
-        <button
-          onClick={() => disconnect()}
-          className="px-4 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg border border-red-500/30 transition-colors"
-        >
+        <button onClick={() => disconnect()} className="px-4 py-2 bg-red-600 text-white rounded">
           Disconnect
         </button>
       </div>
@@ -28,21 +34,18 @@ export default function WalletButton() {
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex gap-2 flex-wrap">
-        {connectors.map((connector) => (
-          <button
-            disabled={!connector.ready || isPending}
-            key={connector.id}
-            onClick={() => connect({ connector })}
-            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-lg transition-all shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {connector.name}
-            {isPending && ' (connecting...)'}
-          </button>
-        ))}
-      </div>
-      {error && <div className="text-red-500 text-sm mt-2">{error.message}</div>}
+    <div className="flex flex-wrap gap-8">
+      {connectors.map((connector) => (
+        <button
+          key={connector.id}
+          onClick={() => connect({ connector })}
+          disabled={status === 'pending'}
+          className="px-6 py-3 border rounded disabled:opacity-50"
+        >
+          {connector.name} {status === 'pending' && ' (connecting...)'}
+        </button>
+      ))}
+      {error && <div className="text-red-500 text-sm">{error.message}</div>}
     </div>
   );
 }
