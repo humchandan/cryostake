@@ -1,23 +1,26 @@
 'use client';
 
-import WalletButton from './WalletButton';
+import { useAccount } from 'wagmi';
 import Link from 'next/link';
+import WalletButton from './WalletButton';  // Add this import (adjust path if needed)
+
+const ADMIN_LIST = (process.env.NEXT_PUBLIC_ADMIN_WALLETS || '')
+  .split(',')
+  .map(a => a.trim().toLowerCase())
+  .filter(Boolean);
 
 export default function Header() {
+  const { address } = useAccount();
+  const isAdmin = !!address && ADMIN_LIST.includes(address.toLowerCase());
+
   return (
-    <header className="flex justify-between items-center p-6 bg-[#161b22] shadow-md border-b border-gray-800">
-      <div className="text-2xl font-bold text-blue-400">
-        <Link href="/">CryoStake</Link>
-      </div>
-      <nav className="space-x-6 text-gray-300 hidden md:flex">
-        <Link href="/dashboard" className="hover:text-blue-400 transition">
-          Dashboard
-        </Link>
-        <Link href="/admin" className="hover:text-blue-400 transition">
-          Admin
-        </Link>
+    <header className="flex justify-between items-center p-6">
+      <Link href="/">CryoStake</Link>
+      <nav className="space-x-6 flex items-center ">
+        <Link href="/dashboard">Dashboard</Link>
+        {isAdmin && <Link href="/admin">Admin</Link>}
+        <WalletButton />           {/* Add WalletButton here */}
       </nav>
-      <WalletButton />
     </header>
   );
 }
