@@ -3,41 +3,23 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "tokenAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "uint8",
-				"name": "decimals",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint256",
-				"name": "minStakeAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "addSupportedToken",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_adminWallet1",
+				"name": "_primaryAdminWallet",
 				"type": "address"
 			},
 			{
 				"internalType": "address",
-				"name": "_adminWallet2",
+				"name": "_secondaryAdminWallet",
 				"type": "address"
 			},
 			{
-				"internalType": "uint256",
-				"name": "_initialAPR",
-				"type": "uint256"
+				"internalType": "address",
+				"name": "_inrtToken",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_usdtToken",
+				"type": "address"
 			}
 		],
 		"stateMutability": "nonpayable",
@@ -55,11 +37,6 @@
 	},
 	{
 		"inputs": [],
-		"name": "BelowThreshold",
-		"type": "error"
-	},
-	{
-		"inputs": [],
 		"name": "Blacklisted",
 		"type": "error"
 	},
@@ -70,7 +47,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "InsufAllowance",
+		"name": "InsufficientBalance",
 		"type": "error"
 	},
 	{
@@ -85,22 +62,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "InvalidBatch",
-		"type": "error"
-	},
-	{
-		"inputs": [],
 		"name": "InvalidPct",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "NoOrder",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "NoOrders",
 		"type": "error"
 	},
 	{
@@ -110,7 +72,17 @@
 	},
 	{
 		"inputs": [],
-		"name": "OrderPaid",
+		"name": "NotMatured",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "OrderAlreadyPaid",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "OrderNotFound",
 		"type": "error"
 	},
 	{
@@ -132,7 +104,7 @@
 				"type": "address"
 			}
 		],
-		"name": "OwnableUnauthorized",
+		"name": "OwnableUnauthorizedAccount",
 		"type": "error"
 	},
 	{
@@ -142,7 +114,12 @@
 	},
 	{
 		"inputs": [],
-		"name": "Reentrancy",
+		"name": "ReentrancyGuardReentrantCall",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "ReferrerNotSet",
 		"type": "error"
 	},
 	{
@@ -153,12 +130,7 @@
 				"type": "address"
 			}
 		],
-		"name": "SafeERC20Failed",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "TimeLocked",
+		"name": "SafeERC20FailedOperation",
 		"type": "error"
 	},
 	{
@@ -169,11 +141,6 @@
 	{
 		"inputs": [],
 		"name": "TooEarly",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "TreasuryInsuf",
 		"type": "error"
 	},
 	{
@@ -199,6 +166,25 @@
 		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "oldPercentage",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "newPercentage",
+				"type": "uint256"
+			}
+		],
+		"name": "AdminCommissionUpdated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
 				"indexed": true,
 				"internalType": "address",
 				"name": "wallet",
@@ -209,9 +195,34 @@
 				"internalType": "uint256",
 				"name": "amount",
 				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "isPrimary",
+				"type": "bool"
 			}
 		],
 		"name": "AdminFeesClaimed",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "oldSplit",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "newSplit",
+				"type": "uint256"
+			}
+		],
+		"name": "AdminSplitUpdated",
 		"type": "event"
 	},
 	{
@@ -253,46 +264,18 @@
 		"type": "event"
 	},
 	{
-		"inputs": [],
-		"name": "claimAdminFees",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "claimReferralRewards",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "depositTreasuryReserve",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "emergencyFundRecovery",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
 				"indexed": true,
+				"internalType": "uint256",
+				"name": "orderId",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
 				"internalType": "address",
-				"name": "to",
+				"name": "user",
 				"type": "address"
 			},
 			{
@@ -300,28 +283,35 @@
 				"internalType": "uint256",
 				"name": "amount",
 				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "penalty",
+				"type": "uint256"
 			}
 		],
-		"name": "EmergencyFundRecovery",
+		"name": "EarlyWithdrawal",
 		"type": "event"
 	},
 	{
+		"anonymous": false,
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "percentage",
-				"type": "uint256"
+				"indexed": false,
+				"internalType": "uint256[]",
+				"name": "orderIds",
+				"type": "uint256[]"
 			},
 			{
+				"indexed": false,
 				"internalType": "uint256",
-				"name": "batchSize",
+				"name": "totalAmount",
 				"type": "uint256"
 			}
 		],
-		"name": "emergencyPayout",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
+		"name": "EmergencyPayout",
+		"type": "event"
 	},
 	{
 		"anonymous": false,
@@ -335,33 +325,7 @@
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "percentage",
-				"type": "uint256"
-			}
-		],
-		"name": "EmergencyPayoutTriggered",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			}
-		],
-		"name": "emergencyWithdraw",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "epochId",
+				"name": "totalOrders",
 				"type": "uint256"
 			},
 			{
@@ -369,15 +333,9 @@
 				"internalType": "uint256",
 				"name": "totalStaked",
 				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "fillPercentage",
-				"type": "uint256"
 			}
 		],
-		"name": "EpochAutoTriggered",
+		"name": "EpochClosed",
 		"type": "event"
 	},
 	{
@@ -394,15 +352,133 @@
 				"internalType": "uint256",
 				"name": "startTime",
 				"type": "uint256"
+			}
+		],
+		"name": "EpochCreated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "oldDuration",
+				"type": "uint256"
 			},
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "currentAPR",
+				"name": "newDuration",
 				"type": "uint256"
 			}
 		],
-		"name": "EpochCreated",
+		"name": "MaturityDurationUpdated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "orderId",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "token",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "orderCount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "totalAmount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "maturityDate",
+				"type": "uint256"
+			}
+		],
+		"name": "OrderCreated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "orderId",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "principal",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "interest",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "adminCommission",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "isPartial",
+				"type": "bool"
+			}
+		],
+		"name": "OrderPaidOut",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferStarted",
 		"type": "event"
 	},
 	{
@@ -428,62 +504,39 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": true,
+				"indexed": false,
 				"internalType": "uint256",
-				"name": "orderId",
+				"name": "fromOrder",
 				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "toOrder",
+				"type": "uint256"
+			}
+		],
+		"name": "PayoutApproved",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "oldWallet",
+				"type": "address"
 			},
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "staker",
+				"name": "newWallet",
 				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "principal",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "interest",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "fee",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "timestamp",
-				"type": "uint256"
 			}
 		],
-		"name": "PayoutProcessed",
+		"name": "PrimaryAdminWalletUpdated",
 		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "epochId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "batchSize",
-				"type": "uint256"
-			}
-		],
-		"name": "processEpochPayouts",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -501,7 +554,7 @@
 				"type": "address"
 			},
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "uint256",
 				"name": "level",
 				"type": "uint256"
@@ -513,7 +566,7 @@
 				"type": "uint256"
 			}
 		],
-		"name": "ReferralBonusAccrued",
+		"name": "ReferralBonusPaid",
 		"type": "event"
 	},
 	{
@@ -532,7 +585,7 @@
 				"type": "uint256"
 			}
 		],
-		"name": "ReferralRewardsClaimed",
+		"name": "ReferralClaimed",
 		"type": "event"
 	},
 	{
@@ -555,178 +608,22 @@
 		"type": "event"
 	},
 	{
-		"inputs": [],
-		"name": "renounceOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "newAPR",
-				"type": "uint256"
-			}
-		],
-		"name": "setAPR",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bool",
-				"name": "enabled",
-				"type": "bool"
-			}
-		],
-		"name": "setAutoReinvest",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "user",
-				"type": "address"
-			},
-			{
-				"internalType": "bool",
-				"name": "status",
-				"type": "bool"
-			}
-		],
-		"name": "setBlacklist",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bool",
-				"name": "paused",
-				"type": "bool"
-			}
-		],
-		"name": "setPaused",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_referrer",
-				"type": "address"
-			}
-		],
-		"name": "setReferrer",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "tokenAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "bool",
-				"name": "isActive",
-				"type": "bool"
-			}
-		],
-		"name": "setTokenStatus",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "newFee",
-				"type": "uint256"
-			}
-		],
-		"name": "setWithdrawalFee",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "tokenAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "stake",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
 				"indexed": true,
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "epochId",
-				"type": "uint256"
+				"internalType": "address",
+				"name": "oldWallet",
+				"type": "address"
 			},
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "staker",
+				"name": "newWallet",
 				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "token",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "lockedAPR",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "bool",
-				"name": "isReinvestment",
-				"type": "bool"
 			}
 		],
-		"name": "StakeCreated",
+		"name": "SecondaryAdminWalletUpdated",
 		"type": "event"
 	},
 	{
@@ -753,14 +650,8 @@
 			},
 			{
 				"indexed": false,
-				"internalType": "uint8",
-				"name": "decimals",
-				"type": "uint8"
-			},
-			{
-				"indexed": false,
 				"internalType": "uint256",
-				"name": "minStake",
+				"name": "orderSize",
 				"type": "uint256"
 			}
 		],
@@ -773,35 +664,9 @@
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "token",
+				"name": "from",
 				"type": "address"
 			},
-			{
-				"indexed": false,
-				"internalType": "bool",
-				"name": "isActive",
-				"type": "bool"
-			}
-		],
-		"name": "TokenStatusChanged",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
 			{
 				"indexed": false,
 				"internalType": "uint256",
@@ -818,26 +683,23 @@
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "oldFee",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "newFee",
+				"name": "healthPercentage",
 				"type": "uint256"
 			}
 		],
-		"name": "WithdrawalFeeUpdated",
+		"name": "TreasuryHealthWarning",
 		"type": "event"
 	},
 	{
-		"stateMutability": "payable",
-		"type": "receive"
+		"inputs": [],
+		"name": "acceptOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"inputs": [],
-		"name": "accumulatedAdminFees",
+		"name": "accumulatedPrimaryAdminFees",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -850,7 +712,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "ADMIN_FEE_PERCENTAGE",
+		"name": "accumulatedSecondaryAdminFees",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -862,34 +724,31 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "adminWallet1",
-		"outputs": [
+		"inputs": [
 			{
 				"internalType": "address",
-				"name": "",
+				"name": "tokenAddress",
 				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "adminWallet2",
-		"outputs": [
+			},
 			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
+				"internalType": "uint8",
+				"name": "decimals",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint256",
+				"name": "orderSize",
+				"type": "uint256"
 			}
 		],
-		"stateMutability": "view",
+		"name": "addSupportedToken",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"inputs": [],
-		"name": "AUTO_TRIGGER_DAYS",
+		"name": "adminCommissionPercentage",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -902,7 +761,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "AUTO_TRIGGER_FILL_THRESHOLD",
+		"name": "autoReinvestBonus",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -933,22 +792,24 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			}
-		],
-		"name": "calculateProRataInterest",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "interest",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
+		"inputs": [],
+		"name": "claimPrimaryAdminFees",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "claimReferralRewards",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "claimSecondaryAdminFees",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -979,6 +840,19 @@
 	},
 	{
 		"inputs": [],
+		"name": "currentMaturityDuration",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "deploymentTimestamp",
 		"outputs": [
 			{
@@ -988,6 +862,19 @@
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "depositTreasury",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -1016,7 +903,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "EARLY_WITHDRAWAL_PENALTY",
+		"name": "earlyWithdrawalPenalty",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -1028,21 +915,28 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "EMERGENCY_TIMELOCK",
-		"outputs": [
+		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
+				"internalType": "uint256[]",
+				"name": "orderIds",
+				"type": "uint256[]"
 			}
 		],
-		"stateMutability": "view",
+		"name": "emergencyPayoutOrders",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"inputs": [],
-		"name": "EPOCH_DURATION",
+		"name": "emergencyRecovery",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "emergencyTimelockEnd",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -1057,29 +951,13 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
+				"name": "orderId",
 				"type": "uint256"
 			}
 		],
-		"name": "epochOrdersByToken",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
+		"name": "emergencyWithdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -1113,19 +991,9 @@
 				"type": "uint256"
 			},
 			{
-				"internalType": "uint256",
-				"name": "currentAPR",
-				"type": "uint256"
-			},
-			{
 				"internalType": "bool",
 				"name": "isActive",
 				"type": "bool"
-			},
-			{
-				"internalType": "uint256",
-				"name": "lastProcessedIndex",
-				"type": "uint256"
 			},
 			{
 				"internalType": "bool",
@@ -1138,11 +1006,105 @@
 	},
 	{
 		"inputs": [],
-		"name": "FIFO_PAYOUT_PERCENTAGE",
+		"name": "getAdminCommissionInfo",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "primaryWallet",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "secondaryWallet",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "primaryAccumulated",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "secondaryAccumulated",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "commissionPercentage",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "primarySplitPercentage",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct CryoStake.AdminCommissionInfo",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getConstants",
 		"outputs": [
 			{
 				"internalType": "uint256",
-				"name": "",
+				"name": "maxOrdersPerEpoch",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "payoutBatchSize",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "inrtPerOrder",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "usdtPerOrder",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "referralMinWithdraw",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "count",
+				"type": "uint256"
+			}
+		],
+		"name": "getNextPayoutOrders",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "orderIds",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "uint256",
+				"name": "totalAmount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "matureCount",
 				"type": "uint256"
 			}
 		],
@@ -1150,80 +1112,37 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "epochId",
-				"type": "uint256"
-			}
-		],
-		"name": "getEpochStats",
+		"inputs": [],
+		"name": "getPlatformStats",
 		"outputs": [
 			{
-				"components": [
-					{
-						"internalType": "uint256",
-						"name": "epochId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "startTime",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "totalOrders",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "totalStaked",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "currentAPR",
-						"type": "uint256"
-					},
-					{
-						"internalType": "bool",
-						"name": "isActive",
-						"type": "bool"
-					},
-					{
-						"internalType": "uint256",
-						"name": "lastProcessedIndex",
-						"type": "uint256"
-					},
-					{
-						"internalType": "bool",
-						"name": "autoTriggered",
-						"type": "bool"
-					}
-				],
-				"internalType": "struct StakingPlatform.EpochData",
-				"name": "data",
-				"type": "tuple"
-			},
-			{
 				"internalType": "uint256",
-				"name": "currentOrders",
+				"name": "totalOrders",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
-				"name": "fillPercentage",
+				"name": "totalStaked",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
-				"name": "timeElapsed",
+				"name": "totalPaid",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
-				"name": "estimatedPayout",
+				"name": "activeOrders",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "pendingPayouts",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "treasury",
 				"type": "uint256"
 			}
 		],
@@ -1238,13 +1157,8 @@
 				"type": "address"
 			}
 		],
-		"name": "getReferralTree",
+		"name": "getReferralInfo",
 		"outputs": [
-			{
-				"internalType": "address[]",
-				"name": "level1",
-				"type": "address[]"
-			},
 			{
 				"components": [
 					{
@@ -1268,7 +1182,7 @@
 						"type": "uint256"
 					}
 				],
-				"internalType": "struct StakingPlatform.ReferralStats",
+				"internalType": "struct CryoStake.ReferralStats",
 				"name": "stats",
 				"type": "tuple"
 			},
@@ -1276,6 +1190,16 @@
 				"internalType": "uint256",
 				"name": "pending",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "claimed",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address[]",
+				"name": "level1",
+				"type": "address[]"
 			}
 		],
 		"stateMutability": "view",
@@ -1283,22 +1207,44 @@
 	},
 	{
 		"inputs": [],
-		"name": "getTreasuryBalance",
+		"name": "getTreasuryHealth",
 		"outputs": [
 			{
-				"internalType": "uint256",
-				"name": "balance",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "required",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bool",
-				"name": "isSufficient",
-				"type": "bool"
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "currentBalance",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "requiredForNextBatch",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "healthPercentage",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "canPayNextBatch",
+						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "isCritical",
+						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "isWarning",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct CryoStake.TreasuryHealth",
+				"name": "",
+				"type": "tuple"
 			}
 		],
 		"stateMutability": "view",
@@ -1312,13 +1258,8 @@
 				"type": "address"
 			}
 		],
-		"name": "getUserStakingSummary",
+		"name": "getUserOrders",
 		"outputs": [
-			{
-				"internalType": "uint256[]",
-				"name": "orderIds",
-				"type": "uint256[]"
-			},
 			{
 				"components": [
 					{
@@ -1328,22 +1269,37 @@
 					},
 					{
 						"internalType": "address",
-						"name": "staker",
+						"name": "user",
 						"type": "address"
 					},
 					{
 						"internalType": "address",
-						"name": "tokenAddress",
+						"name": "token",
 						"type": "address"
 					},
 					{
 						"internalType": "uint256",
-						"name": "amount",
+						"name": "orderCount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amountPerOrder",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "totalAmount",
 						"type": "uint256"
 					},
 					{
 						"internalType": "uint256",
 						"name": "timestamp",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "maturityDate",
 						"type": "uint256"
 					},
 					{
@@ -1353,12 +1309,22 @@
 					},
 					{
 						"internalType": "uint256",
+						"name": "lockedMaturityDuration",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
 						"name": "epochId",
 						"type": "uint256"
 					},
 					{
+						"internalType": "uint256",
+						"name": "paidOrderCount",
+						"type": "uint256"
+					},
+					{
 						"internalType": "bool",
-						"name": "isPaidOut",
+						"name": "fullyPaid",
 						"type": "bool"
 					},
 					{
@@ -1367,59 +1333,32 @@
 						"type": "bool"
 					}
 				],
-				"internalType": "struct StakingPlatform.StakingOrder[]",
-				"name": "orders",
-				"type": "tuple[]"
-			},
-			{
-				"internalType": "uint256",
-				"name": "totalStaked",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "pendingPayouts",
-				"type": "uint256"
-			},
-			{
-				"components": [
-					{
-						"internalType": "uint256",
-						"name": "orderId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "principalAmount",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "interestAmount",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "feeAmount",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "timestamp",
-						"type": "uint256"
-					},
-					{
-						"internalType": "address",
-						"name": "tokenAddress",
-						"type": "address"
-					}
-				],
-				"internalType": "struct StakingPlatform.WithdrawalRecord[]",
-				"name": "withdrawals",
+				"internalType": "struct CryoStake.Order[]",
+				"name": "",
 				"type": "tuple[]"
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "globalOrderCounter",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "initiateEmergencyTimelock",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -1443,7 +1382,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "MAX_BATCH_SIZE",
+		"name": "nextOrderToPay",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -1455,13 +1394,84 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "MAX_ORDERS_PER_EPOCH",
-		"outputs": [
+		"inputs": [
 			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
+			}
+		],
+		"name": "orders",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "orderId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "token",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "orderCount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amountPerOrder",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "totalAmount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "maturityDate",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "lockedAPR",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "lockedMaturityDuration",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "epochId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "paidOrderCount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "fullyPaid",
+				"type": "bool"
+			},
+			{
+				"internalType": "bool",
+				"name": "isReinvestment",
+				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
@@ -1470,6 +1480,19 @@
 	{
 		"inputs": [],
 		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "pendingOwner",
 		"outputs": [
 			{
 				"internalType": "address",
@@ -1501,7 +1524,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "REFERRAL_LEVEL_1",
+		"name": "primaryAdminSplit",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -1514,7 +1537,27 @@
 	},
 	{
 		"inputs": [],
-		"name": "REFERRAL_LEVEL_2",
+		"name": "primaryAdminWallet",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "processPayouts",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "referralLevel1",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -1527,7 +1570,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "REFERRAL_LEVEL_3",
+		"name": "referralLevel2",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -1540,7 +1583,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "REFERRAL_THRESHOLD",
+		"name": "referralLevel3",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -1593,25 +1636,6 @@
 				"type": "address"
 			}
 		],
-		"name": "referrers",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
 		"name": "referrerSet",
 		"outputs": [
 			{
@@ -1624,13 +1648,39 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "REINVESTMENT_APR_BONUS",
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "referrers",
 		"outputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "address",
 				"name": "",
-				"type": "uint256"
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "secondaryAdminWallet",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -1640,22 +1690,157 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "",
+				"name": "newAPR",
 				"type": "uint256"
 			}
 		],
-		"name": "stakingOrders",
-		"outputs": [
+		"name": "setAPR",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "orderId",
+				"name": "newPercentage",
 				"type": "uint256"
-			},
+			}
+		],
+		"name": "setAdminCommission",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "newSplit",
+				"type": "uint256"
+			}
+		],
+		"name": "setAdminSplit",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bool",
+				"name": "enabled",
+				"type": "bool"
+			}
+		],
+		"name": "setAutoReinvest",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
 			{
 				"internalType": "address",
-				"name": "staker",
+				"name": "user",
 				"type": "address"
 			},
+			{
+				"internalType": "bool",
+				"name": "status",
+				"type": "bool"
+			}
+		],
+		"name": "setBlacklist",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "newDuration",
+				"type": "uint256"
+			}
+		],
+		"name": "setMaturityDuration",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bool",
+				"name": "paused",
+				"type": "bool"
+			}
+		],
+		"name": "setPaused",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newWallet",
+				"type": "address"
+			}
+		],
+		"name": "setPrimaryAdminWallet",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_referrer",
+				"type": "address"
+			}
+		],
+		"name": "setReferrer",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newWallet",
+				"type": "address"
+			}
+		],
+		"name": "setSecondaryAdminWallet",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "tokenAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "bool",
+				"name": "isActive",
+				"type": "bool"
+			}
+		],
+		"name": "setTokenStatus",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
 			{
 				"internalType": "address",
 				"name": "tokenAddress",
@@ -1665,34 +1850,11 @@
 				"internalType": "uint256",
 				"name": "amount",
 				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "timestamp",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "lockedAPR",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "epochId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bool",
-				"name": "isPaidOut",
-				"type": "bool"
-			},
-			{
-				"internalType": "bool",
-				"name": "isReinvestment",
-				"type": "bool"
 			}
 		],
-		"stateMutability": "view",
+		"name": "stake",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -1737,6 +1899,11 @@
 				"internalType": "uint256",
 				"name": "minStakeAmount",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "orderSize",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -1763,7 +1930,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "totalOrderCount",
+		"name": "totalPaidOut",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -1794,6 +1961,19 @@
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "totalStakedAllTime",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -1813,8 +1993,21 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
-		"name": "TREASURY_RESERVE_PERCENTAGE",
+		"name": "treasuryBalance",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -1827,15 +2020,9 @@
 	},
 	{
 		"inputs": [],
-		"name": "treasuryReserve",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
+		"name": "triggerNewEpoch",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -1852,68 +2039,6 @@
 			}
 		],
 		"name": "userOrderIds",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "userWithdrawalHistory",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "principalAmount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "interestAmount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "feeAmount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "timestamp",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "tokenAddress",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "withdrawalFeePercentage",
 		"outputs": [
 			{
 				"internalType": "uint256",
